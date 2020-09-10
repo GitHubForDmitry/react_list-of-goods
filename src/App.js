@@ -1,5 +1,4 @@
-import React from 'react';
-import Load from "./components/Load";
+import React, { useState } from 'react';
 
 const goodsFromServer = [
   'Dumplings',
@@ -16,67 +15,68 @@ const goodsFromServer = [
 
 const App = () => {
 
-  const [load, setLoad] = React.useState(false)
-  const [loading, setLoading] = React.useState(false)
-  const [goods, setGoods] = React.useState([])
-  const [direction, setDirection] = React.useState(1)
-  const [wordLength, setWordLength] = React.useState(0)
+  const [load, setLoad] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [goods, setGoods] = useState([]);
+  const [direction, setDirection] = useState(1);
+  const [wordLength, setWordLength] = useState(0);
 
-
-  const loadTodo = () => {
-    setLoading(true)
-    return fetch('https://jsonplaceholder.typicode.com/todos')
-      .then(response => response.json())
-      .then(json => {
-          setLoading(false);
-          setLoad(true);
-          setGoods(goodsFromServer)
-        }
-      );
-  }
-
-  const direct = () => direction === 1 ? setDirection(-1) : setDirection(1);
-
-  const sort = () => {
-    direct();
-
-    const result = goods.sort((a, b) => direction * ( a.localeCompare(b)));
-
-    setGoods([...result]);
+  const loadGoods = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoad(true);
+      setLoading(false);
+      setGoods(goodsFromServer);
+    }, 200)
   };
 
-  const handleChange = (e) => {
-    setWordLength(e.target.value);
-  };
+  const reverse = (arr) => {
+    const result = arr.reverse();
 
-  const result = goods.filter(item => item.length >= +wordLength).map((item, index) => <li key={index}>{item}</li>).slice(0, 20);
-
-  const reverse = () => {
-    const result = goods.reverse();
     setGoods([...result]);
   }
 
-  if(!load) {
-  return (
-    loading ? 'loading...' : <Load load={loadTodo} text='Load'/>
-  )}
-  return (
-  <div className="App">
-    <h1>Goods {result.length}</h1>
-    <ul>
-      {result}
-    </ul>
-    <Load load={reverse} text='rev'/>
-    <Load load={sort} text='sort'/>
-    <select onChange={(e) => handleChange(e)}>
-      <option value="1">1</option>
-      <option value="7">7</option>
-    </select>
-  </div>
-);
+  const sortAlphabetic = (arr) => {
+    direction === 1 ? setDirection(-1) : setDirection(1);
+    const result = arr.sort((a, b) => direction * (a.localeCompare(b)));
 
+    setGoods([...result]);
+  }
+
+  const sort = (arr) => {
+    direction === 1 ? setDirection(-1) : setDirection(1);
+    const result = arr.sort((a, b) => direction * (a.length - b.length));
+
+    setGoods([...result]);
+  }
+
+  const handleChange = (e) => setWordLength(e.target.value);
+
+  const results = goods.filter(word => word.length >= +wordLength)
+    .map((item, i) => <li key={i}>{item}</li>);
+
+  if (!load) {
+    return (
+      loading ? 'Loading...' : <button onClick={() => loadGoods()}>load</button>
+  )
+  }
+  return (
+    <div>
+      <h1>Goods {goods.length}</h1>
+      <ul>
+        {results}
+      </ul>
+
+      <button onClick={() => reverse(goods)}>reverse</button>
+      <button onClick={() => sortAlphabetic(goods)}>sortAlph</button>
+      <button onClick={() => sort(goods)}>sort</button>
+      <select onChange={(e) => handleChange(e)}>
+        <option value="1">1</option>
+        <option value="10">10</option>
+      </select>
+    </div>
+  )
 
 }
-
 
 export default App;
