@@ -21,7 +21,9 @@ const App = () => {
 
   const sort = (a, b) => {
     direction === - 1 ? setDirection(direction * -1) : setDirection(direction);
-    return direction * (a.length - b.length)};
+    const result = direction * (a.length - b.length)
+    setGoods(result);
+  };
   const loadGoods = () => {
     setLoading(true)
     setTimeout(() => {
@@ -29,7 +31,7 @@ const App = () => {
       setGoods(goodsFromServer);
 
       setLoad(true)
-    }, 1500)
+    }, 300)
   };
 
   if (!load) {
