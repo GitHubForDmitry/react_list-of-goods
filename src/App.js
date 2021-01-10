@@ -47,8 +47,8 @@ const App = () => {
         <li key={index}>{good}</li>)
       )}
     </ul>
-
-    <select onChange={sort(goods)}>
+  <button onClick={() => sort(goods)}>sort</button>
+    <select >
       <option value="1">1</option>
       <option value="2">2</option>
       <option value="10">10</option>
